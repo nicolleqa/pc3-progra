@@ -21,9 +21,13 @@
 
     <div class="feedback mt-4">
         @* Me gusta  *@
-        <button class="btn border border-success rounded-circle" style="background-color: transparent; color: #198754;" onclick="sendFeedback(@Model.Id, 'like')">👍</button>
+        <button id="likeButton" class="btn border border-success rounded-circle" 
+                style="background-color: transparent; color: #198754;" 
+                onclick="sendFeedback(@Model.Id, 'like')">👍</button>
         @* No me gusta *@
-        <button class="btn border border-danger rounded-circle" style="background-color: transparent; color: #BB2D3B;" onclick="sendFeedback(@Model.Id, 'dislike')">👎</button>
+        <button id="dislikeButton" class="btn border border-danger rounded-circle" 
+                style="background-color: transparent; color: #BB2D3B;" 
+                onclick="sendFeedback(@Model.Id, 'dislike')">👎</button>
     </div>
 
     <div class="comments mt-4">
@@ -48,25 +52,54 @@
 
 @section Scripts {
     <script>
-        function sendFeedback(postId, sentiment) {
-            fetch('/api/feedback', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    postId: postId,
-                    sentimiento: sentiment,
-                    fecha: new Date()
-                })
-            })
-            .then(response => {
+        async function checkExistingFeedback() {
+            try {
+                const response = await fetch('/api/feedback');
                 if (response.ok) {
-                    alert('¡Gracias por tu feedback!');
-                } else {
-                    alert('Ya has dado feedback a esta publicación');
+                    const feedbacks = await response.json();
+                    const postFeedback = feedbacks.find(f => f.postId === @Model.Id);
+                    
+                    if (postFeedback) {
+                        const likeBtn = document.getElementById('likeButton');
+                        const dislikeBtn = document.getElementById('dislikeButton');
+                        
+                        if (postFeedback.sentimiento === 'like') {
+                            likeBtn.classList.add('bg-success', 'text-white');
+                        } else {
+                            dislikeBtn.classList.add('bg-danger', 'text-white');
+                        }
+                    }
                 }
-            });
+            } catch (error) {
+                console.error('Error', error);
+            }
         }
+
+        function sendFeedback(postId, sentiment) {
+          fetch('/api/feedback', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  postId: postId,
+                  sentimiento: sentiment,
+                  fecha: new Date()
+              })
+          })
+          .then(response => {
+              if (response.ok) {
+                  alert('¡Gracias por tu feedback!');
+              } else {
+                  alert('Ya has dado feedback a esta publicación');
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              alert('Error al enviar feedback');
+          });
+        }
+
+        window.onload = checkExistingFeedback;
     </script>
 }

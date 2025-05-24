@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace pc3_progra.Data;
+using pc3_progra.Models;
 
 public class ApplicationDbContext : IdentityDbContext
 {
@@ -9,4 +10,6 @@ public class ApplicationDbContext : IdentityDbContext
         : base(options)
     {
     }
+
+    public DbSet<Feedback> Feedbacks { get; set; }
 }
