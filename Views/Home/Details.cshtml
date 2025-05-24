@@ -1,0 +1,72 @@
+@model Post
+
+<div class="container mt-4">
+    <div class="mb-4"></div>
+      <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Volver al inicio
+      </a>
+    </div>
+    <h1>@Model.Title</h1>
+    <div class="author-info mt-3">
+        <div class="d-flex align-items-center">
+          <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
+          @* Escrito por: *@
+          <small class="ms-2">Scriptum ab: @Model.Author.Name (@Model.Author.Email)</small>
+        </div>
+    </div>
+    
+    <div class="content mt-4">
+        <p>@Model.Body</p>
+    </div>
+
+    <div class="feedback mt-4">
+        @* Me gusta  *@
+        <button class="btn border border-success rounded-circle" style="background-color: transparent; color: #198754;" onclick="sendFeedback(@Model.Id, 'like')">👍</button>
+        @* No me gusta *@
+        <button class="btn border border-danger rounded-circle" style="background-color: transparent; color: #BB2D3B;" onclick="sendFeedback(@Model.Id, 'dislike')">👎</button>
+    </div>
+
+    <div class="comments mt-4">
+        @* Comentarios *@
+        <h3>Commentarii (@Model.Comments.Count)</h3>
+        @foreach (var comment in Model.Comments)
+        {
+            <div class="card mb-3">
+                <div class="card-header d-flex align-items-center">
+                  <i class="bi bi-robot fs-4 text-secondary me-2"></i>
+                  <span class="fw-bold">@comment.Name</span>
+                  <span class="mx-2">-</span>
+                  <span style="font-size: 0.875em;">@comment.Email</span>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">@comment.Body</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function sendFeedback(postId, sentiment) {
+            fetch('/api/feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    postId: postId,
+                    sentimiento: sentiment,
+                    fecha: new Date()
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('¡Gracias por tu feedback!');
+                } else {
+                    alert('Ya has dado feedback a esta publicación');
+                }
+            });
+        }
+    </script>
+}

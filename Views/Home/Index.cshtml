@@ -1,8 +1,37 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model List<Post>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    @* Nuestras ultimas noticias *@
+    <h1 class="my-4">Nuntii nostri novissimi</h1>
+    @* Aquí puedes encontrar una lista de nuestras últimas publicaciones. *@
+    <p class="lead">Hic invenies indicem nuntiorum nostrorum novissimorum.</p>
+    
+    <div class="row">
+        @for (int i = 0; i < Model?.Count; i += 2)
+        {
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@Model[i].Title</h5>
+                            <p class="card-text">@Model[i].Body.Substring(0, Math.Min(100, Model[i].Body.Length))...</p>
+                            <a asp-action="Details" asp-route-id="@Model[i].Id" class="btn btn-primary">Leer más</a>
+                        </div>
+                    </div>
+                </div>
+                @if (i + 1 < Model.Count)
+                {
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">@Model[i + 1].Title</h5>
+                                <p class="card-text">@Model[i + 1].Body.Substring(0, Math.Min(100, Model[i + 1].Body.Length))...</p>
+                                <a asp-action="Details" asp-route-id="@Model[i + 1].Id" class="btn btn-primary">Leer más</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
 </div>
