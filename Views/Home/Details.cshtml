@@ -49,24 +49,28 @@
 @section Scripts {
     <script>
         function sendFeedback(postId, sentiment) {
-            fetch('/api/feedback', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    postId: postId,
-                    sentimiento: sentiment,
-                    fecha: new Date()
-                })
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert('¡Gracias por tu feedback!');
-                } else {
-                    alert('Ya has dado feedback a esta publicación');
-                }
-            });
+          fetch('/api/feedback', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  postId: postId,
+                  sentimiento: sentiment,
+                  fecha: new Date()
+              })
+          })
+          .then(response => {
+              if (response.ok) {
+                  alert('¡Gracias por tu feedback!');
+              } else {
+                  alert('Ya has dado feedback a esta publicación');
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              alert('Error al enviar feedback');
+          });
         }
     </script>
 }
